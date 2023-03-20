@@ -1,0 +1,184 @@
+---
+
+---
+<div id="three-container"></div>
+<script is:inline src="/js/three.min.js"></script>
+<script is:inline type="module">
+    let camera, scene, renderer;
+    let mesh, spotLight;
+    const AMOUNT = 2;
+
+    const container = document.getElementById('three-container');
+
+    init();
+    animate();
+
+    function init() {
+
+        const ASPECT_RATIO = container.offsetWidth / container.offsetHeight;
+
+        const WIDTH = ( container.offsetWidth / AMOUNT ) * window.devicePixelRatio;
+        const HEIGHT = ( container.offsetHeight / AMOUNT ) * window.devicePixelRatio;
+
+        const cameras = [];
+
+        for ( let y = 0; y < AMOUNT; y ++ ) {
+
+            for ( let x = 0; x < AMOUNT; x ++ ) {
+
+                if (Math.random() < 0.9) {
+                    const subcamera = new THREE.PerspectiveCamera( 40, ASPECT_RATIO, 0.1, 10 );
+                    subcamera.viewport = new THREE.Vector4( Math.floor( x * WIDTH ), Math.floor( y * HEIGHT ), Math.ceil( WIDTH ), Math.ceil( HEIGHT ) );
+                    subcamera.position.x = ( x / AMOUNT ) - Math.random();
+                    subcamera.position.y = Math.random() - ( y / AMOUNT );
+                    subcamera.position.z = 1.5;
+                    subcamera.position.multiplyScalar( 2 );
+                    subcamera.lookAt( 0, 0, 0 );
+                    subcamera.updateMatrixWorld();
+                    cameras.push( subcamera );
+                }
+
+
+            }
+
+        }
+
+        camera = new THREE.ArrayCamera( cameras );
+        camera.position.z = 3;
+
+        scene = new THREE.Scene();
+
+
+        const texture = new THREE.TextureLoader().load( 'disturb.jpg' );
+        texture.minFilter = THREE.LinearFilter;
+        texture.magFilter = THREE.LinearFilter;
+        texture.encoding = THREE.sRGBEncoding;
+
+        // scene.add( new THREE.AmbientLight( 0xA1BB8E ) );
+
+        // const light = new THREE.DirectionalLight();
+        // light.position.set( 0.5, 0.5, 1 );
+        // light.castShadow = true;
+        // light.shadow.camera.zoom = 4; // tighter shadow map
+        // light.map = texture;
+        // scene.add( light );
+        spotLight = new THREE.SpotLight( 0xffffff, 5 );
+        spotLight.position.set( 0, 0, 50);
+        spotLight.angle = 0.02;
+        spotLight.penumbra = 1;
+        spotLight.decay = 2;
+        spotLight.distance = 200;
+        spotLight.map = texture;
+
+        spotLight.castShadow = true;
+        spotLight.shadow.mapSize.width = 1024;
+        spotLight.shadow.mapSize.height = 1024;
+        spotLight.shadow.camera.near = 10;
+        spotLight.shadow.camera.far = 200;
+        spotLight.shadow.focus = 1;
+        scene.add( spotLight );
+
+        const geometryBackground = new THREE.PlaneGeometry( 100, 100 );
+        const materialBackground = new THREE.MeshLambertMaterial( { color: 0x3F5C60 } );
+
+        const background = new THREE.Mesh( geometryBackground, materialBackground );
+        background.receiveShadow = true;
+        background.position.set( 0, 0, - 1 );
+        scene.add( background );
+
+        let cubeSize;
+        if (container.offsetWidth < 500) {
+            cubeSize = 0.5;
+        } else {
+            cubeSize = 1;
+        }
+
+        const geometryCylinder = new THREE.SphereGeometry( 0.4, 50, 50 );
+        // const geometryCylinder = new THREE.BoxGeometry( cubeSize, cubeSize, cubeSize );
+        const materialCylinder = new THREE.MeshLambertMaterial({ 
+            color: 0x3F5C60, 
+            envMap: scene.background,
+            combine: THREE.MixOperation,
+            reflectivity: 0.5 
+        });
+
+        mesh = new THREE.Mesh( geometryCylinder, materialCylinder );
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        scene.add( mesh );
+
+        renderer = new THREE.WebGLRenderer();
+        renderer.setPixelRatio( window.devicePixelRatio );
+        renderer.setSize( container.offsetWidth, container.offsetHeight );
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+        renderer.outputEncoding = THREE.sRGBEncoding;
+
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1;
+
+        container.appendChild( renderer.domElement );
+
+        //
+
+        window.addEventListener( 'resize', onWindowResize );
+
+    }
+
+    function onWindowResize() {
+
+        const ASPECT_RATIO = container.offsetWidth / container.offsetHeight;
+        const WIDTH = ( container.offsetWidth / AMOUNT ) * window.devicePixelRatio;
+        const HEIGHT = ( container.offsetHeight / AMOUNT ) * window.devicePixelRatio;
+
+        camera.aspect = ASPECT_RATIO;
+        camera.updateProjectionMatrix();
+
+        for ( let y = 0; y < AMOUNT; y ++ ) {
+
+            for ( let x = 0; x < AMOUNT; x ++ ) {
+
+                const subcamera = camera.cameras[ AMOUNT * y + x ];
+
+                subcamera.viewport.set(
+                    Math.floor( x * WIDTH ),
+                    Math.floor( y * HEIGHT ),
+                    Math.ceil( WIDTH ),
+                    Math.ceil( HEIGHT ) );
+
+                subcamera.aspect = ASPECT_RATIO;
+                subcamera.updateProjectionMatrix();
+
+            }
+
+        }
+
+        renderer.setSize( container.offsetWidth, container.offsetHeight );
+
+    }
+
+    function animate() {
+
+        mesh.rotation.y += 0.0005;
+        mesh.rotation.z += 0.0001;
+        spotLight.position.x += 0.01;
+
+        renderer.render( scene, camera );
+
+        requestAnimationFrame( animate );
+
+    }
+
+</script>
+<style lang="scss">
+    #three-container {
+        z-index: -99;
+        height: 100vh;
+        width: 100vw;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+</style>

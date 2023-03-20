@@ -19,17 +19,31 @@ const { title } = Astro.props;
 		<slot />
 	</body>
 </html>
-<style is:global>
-	:root {
-		--accent: 124, 58, 237;
-		--accent-gradient: linear-gradient(45deg, rgb(var(--accent)), #da62c4 30%, white 60%);
+<style lang="scss">
+	@font-face {
+		font-family: 'Space Grotesk';
+		font-style: normal;
+		font-weight: 400;
+		src: url('/fonts/SpaceGrotesk-Medium.ttf');
 	}
-	html {
-		font-family: system-ui, sans-serif;
-		background-color: #F6F6F6;
+
+	@font-face {
+		font-family: 'Space Grotesk';
+		font-style: normal;
+		font-weight: 100;
+		src: url('/fonts/SpaceGrotesk-Light.ttf');
 	}
-	code {
-		font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
-			Bitstream Vera Sans Mono, Courier New, monospace;
+
+	@font-face {
+		font-family: 'Space Grotesk';
+		font-style: bold;
+		src: url('/fonts/SpaceGrotesk-Bold.ttf');
+	}
+
+	* {
+		margin: 0;
+		padding: 0;
+		overflow: hidden;
+		font-family: 'Space Grotesk';
 	}
 </style>
