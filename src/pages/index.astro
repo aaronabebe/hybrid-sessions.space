@@ -5,7 +5,8 @@ import ThreeBackground from '../components/ThreeBackground.astro';
 
 <Layout title="hybrid sessions.">
 	<main>
-		<h1>hybrid sessions</h1>
+		<img src="/logo.svg" alt="hybrid sessions" />
+		<h1>21.8. – 27.8.2023</h1>
 	</main>
 	<ThreeBackground />
 </Layout>
@@ -15,16 +16,19 @@ import ThreeBackground from '../components/ThreeBackground.astro';
 		margin: auto;
 		padding: 0 10rem;
 		display: flex;
+		flex-direction: column;
 		justify-content: center;
 		align-items: center;
 		height: 100vh;
 	}
 
 	h1 {
-		font-size: 5em;
 		color: #F45438;
 		font-style: bold;
-		line-height: 1.2;
-		border-bottom: 5px solid;
+		text-decoration: underline;
+	}
+
+	img {
+		width: 60%;
 	}
 </style>

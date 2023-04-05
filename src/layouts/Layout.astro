@@ -14,12 +14,29 @@ const { title } = Astro.props;
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+		<script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+
+		<script type="importmap">
+		  {
+			"imports": {
+			  "three": "https://unpkg.com/three@0.151.3/build/three.module.js",
+			  "three/addons/": "https://unpkg.com/three@0.151.3/examples/jsm/"
+			}
+		  }
+		</script>
 	</head>
 	<body>
 		<slot />
 	</body>
 </html>
 <style lang="scss">
+	@font-face {
+		font-family: 'Syne';
+		font-style: normal;
+		font-weight: 400;
+		src: url('/fonts/Syne-VariableFont_wght.ttf');
+	}
+
 	@font-face {
 		font-family: 'Space Grotesk';
 		font-style: normal;
@@ -44,6 +61,6 @@ const { title } = Astro.props;
 		margin: 0;
 		padding: 0;
 		overflow: hidden;
-		font-family: 'Space Grotesk';
+		font-family: 'Syne';
 	}
 </style>
