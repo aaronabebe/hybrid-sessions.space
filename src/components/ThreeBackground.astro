@@ -91,26 +91,7 @@
         background.position.set(0, 0, -1);
         scene.add(background);
 
-        let cubeSize;
-        if (container.offsetWidth < 500) {
-            cubeSize = 0.5;
-        } else {
-            cubeSize = 1;
         }
-
-        // const geometryCylinder = new THREE.SphereGeometry(0.4, 50, 50);
-        // const geometryCylinder = new THREE.BoxGeometry( cubeSize, cubeSize, cubeSize );
-        // const materialCylinder = new THREE.MeshLambertMaterial({
-        //     color: 0x3F5C60,
-        //     envMap: scene.background,
-        //     combine: THREE.MixOperation,
-        //     reflectivity: 0.5
-        // });
-        //
-        // mesh = new THREE.Mesh(geometryCylinder, materialCylinder);
-        // mesh.castShadow = true;
-        // mesh.receiveShadow = true;
-        // scene.add(mesh);
 
         renderer = new THREE.WebGLRenderer();
         renderer.setPixelRatio(window.devicePixelRatio);
