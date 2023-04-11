@@ -5,10 +5,11 @@
 <script is:inline type="module">
     import * as THREE from 'three';
     import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+    import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 
     let camera, scene, renderer;
-    let mesh, spotLight, tv, h;
-    const AMOUNT = 2;
+    let spotLight, tv, h;
+    const AMOUNT = 1;
 
     const container = document.getElementById('three-container');
 
@@ -28,8 +29,8 @@
             for (let x = 0; x < AMOUNT; x++) {
                 const subcamera = new THREE.PerspectiveCamera(40, ASPECT_RATIO, 0.1, 10);
                 subcamera.viewport = new THREE.Vector4(Math.floor(x * WIDTH), Math.floor(y * HEIGHT), Math.ceil(WIDTH), Math.ceil(HEIGHT));
-                subcamera.position.x = (x / AMOUNT) - Math.random();
-                subcamera.position.y = Math.random() - (y / AMOUNT);
+                subcamera.position.x = (x / AMOUNT) - 0.8;
+                subcamera.position.y = 0.5 - (y / AMOUNT);
                 subcamera.position.z = 1.5;
                 subcamera.position.multiplyScalar(2);
                 subcamera.lookAt(0, 0, 0);
@@ -45,11 +46,15 @@
         scene = new THREE.Scene();
 
         const loader = new GLTFLoader();
+        const dracoLoader = new DRACOLoader()
+        dracoLoader.setDecoderPath( 'https://www.gstatic.com/draco/versioned/decoders/1.5.6/' );
+		dracoLoader.setDecoderConfig( { type: 'js' } );
+        loader.setDRACOLoader(dracoLoader)
 
         loader.load('/tv.glb', (gltf) => {
-            const scale = 1.2;
+            const scale = 4;
             tv = gltf.scene;
-            tv.position.y = -0.5;
+            tv.position.y = -1;
             tv.scale.x = scale;
             tv.scale.y = scale;
             tv.scale.z = scale;
@@ -68,7 +73,7 @@
 
         spotLight = new THREE.SpotLight(0xffffff, 20);
         h = 0.5;
-        spotLight.position.set(0, 0, 50);
+        spotLight.position.set(0, 0, 100);
         spotLight.angle = 0.02;
         spotLight.penumbra = 1;
         spotLight.decay = 2;
@@ -90,8 +95,6 @@
         background.receiveShadow = true;
         background.position.set(0, 0, -1);
         scene.add(background);
-
-        }
 
         renderer = new THREE.WebGLRenderer();
         renderer.setPixelRatio(window.devicePixelRatio);
